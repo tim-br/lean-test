@@ -1,28 +1,38 @@
 # LeanTest
 
-A unit testing framework for Lean 4 with an API inspired by Elixir's ExUnit. LeanTest provides an expressive, easy-to-use testing interface for writing and running tests in Lean.
+[![CI](https://github.com/tim-br/lean-test/workflows/CI/badge.svg)](https://github.com/tim-br/lean-test/actions)
+
+A unit testing framework for Lean 4. LeanTest provides an expressive, easy-to-use testing interface for writing and running tests in Lean.
 
 ## Features
 
-- **Elixir-style API**: Familiar syntax for developers coming from Elixir/ExUnit
+- **Fluent API**: Clean, readable test definition syntax using pipe operators
 - **Rich Assertions**: Comprehensive set of assertion functions
 - **Colorized Output**: Clear, colorful test results in the terminal
 - **Test Organization**: Group tests into test suites for better organization
 - **Custom Messages**: Add custom error messages to assertions
+- **CI/CD Ready**: Proper exit codes for continuous integration
 
 ## Installation
 
-This is a standalone Lean 4 project. To use it:
+Add LeanTest as a dependency to your project's `lakefile.toml`:
 
-1. Clone or copy this repository
-2. Build the project:
+```toml
+[[require]]
+name = "LeanTest"
+git = "https://github.com/tim-br/lean-test"
+rev = "main"
+```
+
+Then run:
 ```bash
+lake update
 lake build
 ```
 
 ## Quick Start
 
-Here's a simple example similar to Elixir's ExUnit:
+Here's a simple example:
 
 ```lean
 import LeanTest
@@ -48,7 +58,7 @@ def main : IO UInt32 := do
 
 ### Assertions
 
-LeanTest provides the following assertion functions (similar to ExUnit):
+LeanTest provides the following assertion functions:
 
 #### `assert`
 Assert that a boolean condition is true.
@@ -160,47 +170,17 @@ Examples of custom error messages and function testing.
 lake env lean examples/CustomMessageTest.lean
 ```
 
-## Comparison with Elixir's ExUnit
+### StackTest.lean
+**Real-world example** testing a complete Stack data structure implementation. Demonstrates:
+- Testing stateful operations (push, pop, peek)
+- Testing edge cases (empty stack, full sequences)
+- Testing invariants (LIFO ordering, size consistency)
+- Testing with different types (Nat, String)
+- 22 comprehensive tests covering all operations
 
-If you're familiar with Elixir's ExUnit, here's how LeanTest maps to ExUnit concepts:
-
-| ExUnit | LeanTest | Example |
-|--------|----------|---------|
-| `test "description"` | `.addTest "description"` | Test definition |
-| `assert` | `assert` | Boolean assertion |
-| `assert x == y` | `assertEqual x y` | Equality assertion |
-| `refute` | `refute` | Refute assertion |
-| `describe` | `TestSuite.empty "name"` | Test grouping |
-| `ExUnit.run()` | `runTestSuites [...]` | Run tests |
-
-### ExUnit Example:
-```elixir
-defmodule MathTest do
-  use ExUnit.Case
-
-  describe "addition" do
-    test "adds two numbers" do
-      assert 2 + 2 == 4
-    end
-
-    test "is commutative" do
-      assert 3 + 5 == 5 + 3
-    end
-  end
-end
-```
-
-### LeanTest Equivalent:
-```lean
-def mathTests : TestSuite :=
-  (TestSuite.empty "addition")
-  |>.addTest "adds two numbers" (do
-      return assertEqual 4 (2 + 2))
-  |>.addTest "is commutative" (do
-      return assertEqual (3 + 5) (5 + 3))
-
-def main : IO UInt32 := do
-  runTestSuitesWithExitCode [mathTests]
+**Run it:**
+```bash
+lake env lean --run examples/StackTest.lean
 ```
 
 ## Output Format
@@ -294,7 +274,3 @@ Contributions are welcome! Feel free to:
 ## License
 
 Apache License 2.0 - See [LICENSE](LICENSE) file for details
-
-## Acknowledgments
-
-Inspired by Elixir's ExUnit testing framework.

@@ -1,5 +1,5 @@
 /-
-Assertion functions for unit testing, similar to Elixir's ExUnit assertions.
+Assertion functions for unit testing.
 -/
 
 namespace LeanTest

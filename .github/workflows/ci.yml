@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+      fail-fast: false
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install elan
+      run: |
+        curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+        echo "$HOME/.elan/bin" >> $GITHUB_PATH
+
+    - name: Verify Lean installation
+      run: |
+        lake --version
+        lean --version
+
+    - name: Build LeanTest
+      run: lake build
+
+    - name: Run BasicTest
+      run: |
+        lake env lean --run examples/BasicTest.lean
+        if [ $? -ne 0 ]; then
+          echo "BasicTest failed!"
+          exit 1
+        fi
+
+    - name: Run CollectionTest
+      run: |
+        lake env lean --run examples/CollectionTest.lean
+        if [ $? -ne 0 ]; then
+          echo "CollectionTest failed!"
+          exit 1
+        fi
+
+    - name: Run CustomMessageTest
+      run: |
+        lake env lean --run examples/CustomMessageTest.lean
+        if [ $? -ne 0 ]; then
+          echo "CustomMessageTest failed!"
+          exit 1
+        fi
+
+    - name: Run StackTest (Real-World Example)
+      run: |
+        lake env lean --run examples/StackTest.lean
+        if [ $? -ne 0 ]; then
+          echo "StackTest failed!"
+          exit 1
+        fi
+
+    - name: All tests passed
+      run: echo "✅ All tests passed successfully!"

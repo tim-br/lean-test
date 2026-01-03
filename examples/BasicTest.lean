@@ -1,6 +1,5 @@
 /-
 Basic test examples demonstrating assertion usage.
-Similar to Elixir's ExUnit test syntax.
 -/
 
 import LeanTest

@@ -1,5 +1,5 @@
 /-
-Test case and test suite management, similar to Elixir's ExUnit.
+Test case and test suite management.
 -/
 
 import LeanTest.Assertions
