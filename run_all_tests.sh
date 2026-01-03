@@ -30,6 +30,7 @@ run_test "BasicTest" "examples/BasicTest.lean"
 run_test "CollectionTest" "examples/CollectionTest.lean"
 run_test "CustomMessageTest" "examples/CustomMessageTest.lean"
 run_test "StackTest" "examples/StackTest.lean"
+run_test "AdvancedAssertionsTest" "examples/AdvancedAssertionsTest.lean"
 
 echo "================================"
 echo "Test Summary"

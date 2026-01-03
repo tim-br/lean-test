@@ -105,4 +105,62 @@ def assertContains [BEq α] [Repr α] (list : List α) (element : α) (message :
       s!"{message}\nExpected list to contain {repr element}\nList: {repr list}"
     .failure msg
 
+/-- Assert that a value is within a range (inclusive) -/
+def assertInRange [LE α] [DecidableRel (· ≤ · : α → α → Prop)] [Repr α]
+    (value : α) (min : α) (max : α) (message : String := "") : AssertionResult :=
+  if min ≤ value ∧ value ≤ max then
+    .success
+  else
+    let msg := if message.isEmpty then
+      s!"Expected {repr value} to be in range [{repr min}, {repr max}]"
+    else
+      s!"{message}\nExpected {repr value} to be in range [{repr min}, {repr max}]"
+    .failure msg
+
+/-- Assert that an Except value is an error -/
+def assertError [Repr ε] [Repr α] (result : Except ε α) (message : String := "") : AssertionResult :=
+  match result with
+  | .error _ => .success
+  | .ok val =>
+    let msg := if message.isEmpty then
+      s!"Expected error but got Ok: {repr val}"
+    else
+      s!"{message}\nExpected error but got Ok: {repr val}"
+    .failure msg
+
+/-- Assert that an Except value is ok -/
+def assertOk [Repr ε] [Repr α] (result : Except ε α) (message : String := "") : AssertionResult :=
+  match result with
+  | .ok _ => .success
+  | .error err =>
+    let msg := if message.isEmpty then
+      s!"Expected Ok but got error: {repr err}"
+    else
+      s!"{message}\nExpected Ok but got error: {repr err}"
+    .failure msg
+
+/-- Assert that an IO action throws an error -/
+def assertThrows (action : IO α) (message : String := "") : IO AssertionResult := do
+  try
+    let _ ← action
+    let msg := if message.isEmpty then
+      "Expected IO action to throw an error, but it succeeded"
+    else
+      s!"{message}\nExpected IO action to throw an error, but it succeeded"
+    return .failure msg
+  catch _ =>
+    return .success
+
+/-- Assert that an IO action succeeds (doesn't throw) -/
+def assertSucceeds (action : IO α) (message : String := "") : IO AssertionResult := do
+  try
+    let _ ← action
+    return .success
+  catch e =>
+    let msg := if message.isEmpty then
+      s!"Expected IO action to succeed, but it threw: {e}"
+    else
+      s!"{message}\nExpected IO action to succeed, but it threw: {e}"
+    return .failure msg
+
 end LeanTest

@@ -7,10 +7,14 @@ A unit testing framework for Lean 4. LeanTest provides an expressive, easy-to-us
 ## Features
 
 - **Fluent API**: Clean, readable test definition syntax using pipe operators
-- **Rich Assertions**: Comprehensive set of assertion functions
+- **Rich Assertions**: Comprehensive set of assertion functions including:
+  - Basic assertions (equality, boolean, Option, collections)
+  - Range checking (`assertInRange`)
+  - Error handling (`assertError`, `assertOk` for `Except` types)
+  - IO testing (`assertThrows`, `assertSucceeds` for IO operations)
 - **Colorized Output**: Clear, colorful test results in the terminal
 - **Test Organization**: Group tests into test suites for better organization
-- **Custom Messages**: Add custom error messages to assertions
+- **Custom Messages**: Add custom error messages to all assertions
 - **CI/CD Ready**: Proper exit codes for continuous integration
 
 ## Installation
@@ -114,6 +118,36 @@ Assert that a list contains an element.
 assertContains [1, 2, 3, 4] 3
 ```
 
+#### `assertInRange`
+Assert that a value is within a range (inclusive).
+```lean
+assertInRange 5 1 10  -- checks if 5 is in [1, 10]
+assertInRange 3.14 0.0 5.0  -- works with floats
+assertInRange (-5) (-10) 0  -- works with negative ranges
+```
+
+#### `assertError` / `assertOk`
+Assert the result of an Except type.
+```lean
+-- Assert that result is an error
+let result : Except String Nat := .error "failed"
+assertError result
+
+-- Assert that result is ok
+let result : Except String Nat := .ok 42
+assertOk result
+```
+
+#### `assertThrows` / `assertSucceeds`
+Assert whether an IO action throws an error. **Note:** These return `IO AssertionResult`.
+```lean
+-- Assert that IO action throws
+assertThrows (IO.FS.readFile "/nonexistent/file.txt")
+
+-- Assert that IO action succeeds
+assertSucceeds (pure ())
+```
+
 ### Test Organization
 
 #### Creating Test Suites
@@ -181,6 +215,19 @@ lake env lean examples/CustomMessageTest.lean
 **Run it:**
 ```bash
 lake env lean --run examples/StackTest.lean
+```
+
+### AdvancedAssertionsTest.lean
+Tests for advanced assertions including range checking, error handling, and IO operations. Demonstrates:
+- Range assertions (`assertInRange`)
+- Error handling with `Except` types (`assertError`, `assertOk`)
+- IO error testing (`assertThrows`, `assertSucceeds`)
+- Real-world validation example (config parsing)
+- 28 tests covering edge cases and error scenarios
+
+**Run it:**
+```bash
+lake env lean --run examples/AdvancedAssertionsTest.lean
 ```
 
 ## Output Format
@@ -263,6 +310,29 @@ def fibTests : TestSuite :=
       return assertEqual 5 (fibonacci 5))
 ```
 
+## Running All Tests
+
+To run all example tests at once:
+
+```bash
+./run_all_tests.sh
+```
+
+This script:
+- Builds the LeanTest framework
+- Runs all example test suites (BasicTest, CollectionTest, CustomMessageTest, StackTest, AdvancedAssertionsTest)
+- Reports a summary of passed/failed test suites
+- Returns exit code 0 if all pass, 1 if any fail
+
+## Continuous Integration
+
+LeanTest uses GitHub Actions to automatically run all tests on every push and pull request. The CI pipeline:
+- Tests on both Ubuntu and macOS
+- Verifies all examples pass
+- Ensures the framework dogfoods its own testing capabilities
+
+See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for the full configuration.
+
 ## Contributing
 
 Contributions are welcome! Feel free to:
@@ -270,6 +340,11 @@ Contributions are welcome! Feel free to:
 - Improve error messages
 - Add more examples
 - Enhance the test runner
+
+Please ensure all tests pass before submitting a PR:
+```bash
+./run_all_tests.sh
+```
 
 ## License
 
