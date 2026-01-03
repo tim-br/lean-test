@@ -1,6 +1,6 @@
 # LeanTest
 
-[![CI](https://github.com/tim-br/lean-test/workflows/CI/badge.svg)](https://github.com/tim-br/lean-test/actions)
+[![CI](https://github.com/tim-br/LeanTest/workflows/CI/badge.svg)](https://github.com/tim-br/LeanTest/actions)
 
 A unit testing framework for Lean 4. LeanTest provides an expressive, easy-to-use testing interface for writing and running tests in Lean.
 
@@ -24,7 +24,7 @@ Add LeanTest as a dependency to your project's `lakefile.toml`:
 ```toml
 [[require]]
 name = "LeanTest"
-git = "https://github.com/tim-br/lean-test"
+git = "https://github.com/tim-br/LeanTest"
 rev = "main"
 ```
 
