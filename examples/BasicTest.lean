@@ -43,8 +43,8 @@ def stringTests : TestSuite :=
       return assertEqual 4 str.length)
 
 /-- Main function to run all tests -/
-def main : IO Unit := do
-  runTestSuites [
+def main : IO UInt32 := do
+  runTestSuitesWithExitCode [
     arithmeticTests,
     booleanTests,
     stringTests

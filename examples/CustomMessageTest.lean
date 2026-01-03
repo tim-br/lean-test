@@ -57,10 +57,10 @@ def failingTests : TestSuite :=
 --       return assertEqual [1, 2, 3] [1, 2, 4])
 
 /-- Main function to run all tests -/
-def main : IO Unit := do
-  runTestSuites [
+def main : IO UInt32 := do
+  runTestSuitesWithExitCode [
     customMessageTests,
     functionTests,
-    edgeCaseTests,
-    failingTests  -- Uncomment to see test failures
+    edgeCaseTests
+    -- failingTests  -- Uncomment to see test failures
   ]

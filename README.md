@@ -40,8 +40,8 @@ def myTests : TestSuite :=
       return assertTrue true)
 
 /-- Run the tests -/
-def main : IO Unit := do
-  runTestSuites [myTests]
+def main : IO UInt32 := do
+  runTestSuitesWithExitCode [myTests]
 ```
 
 ## API Reference
@@ -117,12 +117,18 @@ def myTestSuite : TestSuite :=
 ```
 
 #### Running Tests
+
+**For CI/CD (recommended):**
+```lean
+def main : IO UInt32 := do
+  -- Returns exit code: 0 if all tests pass, 1 if any fail
+  runTestSuitesWithExitCode [suite1, suite2, suite3]
+```
+
+**For interactive use:**
 ```lean
 def main : IO Unit := do
-  -- Run a single test suite
-  runTestSuites [myTestSuite]
-
-  -- Run multiple test suites
+  -- Always exits with code 0
   runTestSuites [suite1, suite2, suite3]
 ```
 
@@ -193,8 +199,8 @@ def mathTests : TestSuite :=
   |>.addTest "is commutative" (do
       return assertEqual (3 + 5) (5 + 3))
 
-def main : IO Unit := do
-  runTestSuites [mathTests]
+def main : IO UInt32 := do
+  runTestSuitesWithExitCode [mathTests]
 ```
 
 ## Output Format
@@ -227,8 +233,21 @@ FAILED
 2. Import LeanTest: `import LeanTest`
 3. Open the namespace: `open LeanTest`
 4. Define your test suites using `TestSuite.empty` and `.addTest`
-5. Create a `main` function that calls `runTestSuites`
-6. Run with: `lake env lean your_test_file.lean`
+5. Create a `main` function that calls `runTestSuitesWithExitCode` (for CI) or `runTestSuites` (for interactive use)
+6. Run with: `lake env lean --run your_test_file.lean`
+
+### Exit Codes for CI/CD
+
+When using `runTestSuitesWithExitCode`, your test executable will:
+- Return **exit code 0** if all tests pass
+- Return **exit code 1** if any tests fail
+
+This makes it easy to integrate with CI/CD pipelines:
+
+```bash
+lake env lean --run tests/MyTests.lean
+# Exit code will be non-zero if tests fail, failing the CI build
+```
 
 ## Advanced Usage
 

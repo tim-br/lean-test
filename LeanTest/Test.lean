@@ -112,4 +112,19 @@ def runTestSuites (suites : List TestSuite) : IO Unit := do
 
   printSummary totalStats
 
+/-- Run multiple test suites and return exit code (0 = all passed, 1 = some failed) -/
+def runTestSuitesWithExitCode (suites : List TestSuite) : IO UInt32 := do
+  let mut totalStats := TestStats.empty
+
+  for suite in suites do
+    let stats ← runTestSuite suite
+    totalStats := {
+      total := totalStats.total + stats.total,
+      passed := totalStats.passed + stats.passed,
+      failed := totalStats.failed + stats.failed
+    }
+
+  printSummary totalStats
+  return if totalStats.failed > 0 then 1 else 0
+
 end LeanTest

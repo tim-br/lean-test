@@ -64,8 +64,8 @@ def pointTests : TestSuite :=
       return assertNotEqual p1 p2)
 
 /-- Main function to run all tests -/
-def main : IO Unit := do
-  runTestSuites [
+def main : IO UInt32 := do
+  runTestSuitesWithExitCode [
     listTests,
     optionTests,
     pointTests
