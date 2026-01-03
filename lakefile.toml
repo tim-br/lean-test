@@ -1,0 +1,6 @@
+name = "lean-test"
+version = "0.1.0"
+defaultTargets = ["LeanTest"]
+
+[[lean_lib]]
+name = "LeanTest"
